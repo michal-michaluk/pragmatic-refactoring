@@ -7,10 +7,14 @@ import entities.ProductionEntity;
 import entities.ShortageEntity;
 import enums.DeliverySchema;
 import external.CurrentStock;
+import shortages.ProductionOutputs;
 import tools.Util;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 public class ShortageFinder {
@@ -49,13 +53,7 @@ public class ShortageFinder {
                 .limit(daysAhead)
                 .toList();
 
-        Map<LocalDate, List<ProductionEntity>> outputs = new HashMap<>();
-        for (ProductionEntity production : productions) {
-            if (!outputs.containsKey(production.getStart().toLocalDate())) {
-                outputs.put(production.getStart().toLocalDate(), new ArrayList<>());
-            }
-            outputs.get(production.getStart().toLocalDate()).add(production);
-        }
+        ProductionOutputs outputs = new ProductionOutputs(productions);
         Map<LocalDate, DemandEntity> demandsPerDay = new HashMap<>();
         for (DemandEntity demand : demands) {
             demandsPerDay.put(demand.getDay(), demand);
@@ -67,15 +65,10 @@ public class ShortageFinder {
         for (LocalDate day : dates) {
             DemandEntity demand = demandsPerDay.get(day);
             if (demand == null) {
-                for (ProductionEntity production : outputs.get(day)) {
-                    level += production.getOutput();
-                }
+                level = outputs.getLevel(level, day);
                 continue;
             }
-            long produced = 0;
-            for (ProductionEntity production : outputs.get(day)) {
-                produced += production.getOutput();
-            }
+            long produced = outputs.getProduced(day);
 
             long levelOnDelivery;
             if (Util.getDeliverySchema(demand) == DeliverySchema.atDayStart) {
