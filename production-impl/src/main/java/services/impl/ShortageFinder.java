@@ -2,15 +2,10 @@ package services.impl;
 
 import entities.ShortageEntity;
 import external.CurrentStock;
-import shortages.DemandRepository;
-import shortages.Demands;
-import shortages.ProductionOutputs;
-import shortages.ProductionRepository;
+import shortages.*;
 
 import java.time.LocalDate;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Stream;
 
 public class ShortageFinder {
 
@@ -41,38 +36,13 @@ public class ShortageFinder {
      * (increase amount in scheduled transport or organize extra transport at given time)
      */
     public List<ShortageEntity> findShortages(String productRefNo, LocalDate today, int daysAhead, CurrentStock stock) {
-
-        List<LocalDate> dates = Stream.iterate(today, date -> date.plusDays(1))
-                .limit(daysAhead)
-                .toList();
-
+        DateRange dates = DateRange.of(today, daysAhead);
         ProductionOutputs outputs = productionRepository.get(productRefNo, today);
         Demands demandsPerDay = demandRepository.get(productRefNo, today);
 
         long level = stock.getLevel();
 
-        List<ShortageEntity> gap = new LinkedList<>();
-        for (LocalDate day : dates) {
-            Demands.DailyDemand demand = demandsPerDay.get(day);
-            if (demand == null) {
-                level += outputs.getProduced(day);
-                continue;
-            }
-            long produced = outputs.getProduced(day);
-
-            long levelOnDelivery = demand.calculateLevelOnDelivery(level, produced);
-
-            if (levelOnDelivery < 0) {
-                ShortageEntity entity = new ShortageEntity();
-                entity.setRefNo(productRefNo);
-                entity.setFound(LocalDate.now());
-                entity.setAtDay(day);
-                entity.setMissing(-levelOnDelivery);
-                gap.add(entity);
-            }
-            long endOfDayLevel = demand.calculateEndOfDayLevel(level, produced);
-            level = endOfDayLevel >= 0 ? endOfDayLevel : 0;
-        }
+        List<ShortageEntity> gap = new ShortagePrediction(productRefNo, dates, outputs, demandsPerDay, level).predict();
         return gap;
     }
 
