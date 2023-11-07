@@ -1,4 +1,4 @@
-package services.impl;
+package acl;
 
 import dao.DemandDao;
 import dao.ProductionDao;
@@ -19,7 +19,7 @@ import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 
-public class ShortageFinderTest {
+public class ShortageFinderACLTest {
 
     private final String productRefNo = "300900";
     AtomicLong ids = new AtomicLong(0);
@@ -27,7 +27,7 @@ public class ShortageFinderTest {
 
     private final DemandDao demands = Mockito.mock(DemandDao.class);
     private final ProductionDao productions = Mockito.mock(ProductionDao.class);
-    private final ShortageFinder subject = new ShortageFinder(demands, productions);
+    private final ShortageFinderACL subject = new ShortageFinderACL(new DemandACLRepository(demands), new ProductionACLRepository(productions));
 
     @Test
     public void findShortages() {

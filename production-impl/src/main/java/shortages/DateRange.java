@@ -13,6 +13,7 @@ public class DateRange implements Iterable<LocalDate> {
     }
 
     public static DateRange of(LocalDate start, int daysAhead) {
+        assert daysAhead > 0;
         List<LocalDate> dates = Stream.iterate(start, date -> date.plusDays(1))
                 .limit(daysAhead)
                 .toList();
@@ -22,5 +23,9 @@ public class DateRange implements Iterable<LocalDate> {
     @Override
     public Iterator<LocalDate> iterator() {
         return dates.iterator();
+    }
+
+    public LocalDate start() {
+        return dates.get(0);
     }
 }
