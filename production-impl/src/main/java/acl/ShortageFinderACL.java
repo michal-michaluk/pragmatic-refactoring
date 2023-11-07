@@ -2,10 +2,7 @@ package acl;
 
 import entities.ShortageEntity;
 import external.CurrentStock;
-import shortages.DateRange;
-import shortages.DemandRepository;
-import shortages.ProductionRepository;
-import shortages.ShortagePredictionService;
+import shortages.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -26,6 +23,8 @@ public class ShortageFinderACL {
                 productionRepository,
                 refNo -> stock.getLevel()
         );
-        return service.predict(productRefNo, DateRange.of(today, daysAhead));
+        Shortages shortages = service.predict(productRefNo, DateRange.of(today, daysAhead));
+
+        return shortages.getEntities();
     }
 }

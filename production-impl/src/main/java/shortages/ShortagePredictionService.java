@@ -1,9 +1,5 @@
 package shortages;
 
-import entities.ShortageEntity;
-
-import java.util.List;
-
 public class ShortagePredictionService {
 
     private final DemandRepository demandRepository;
@@ -16,7 +12,7 @@ public class ShortagePredictionService {
         this.warehouseRepository = warehouseRepository;
     }
 
-    public List<ShortageEntity> predict(String productRefNo, DateRange dates) {
+    public Shortages predict(String productRefNo, DateRange dates) {
         ProductionOutputs outputs = productionRepository.get(productRefNo, dates.start());
         Demands demandsPerDay = demandRepository.get(productRefNo, dates.start());
         long level = warehouseRepository.get(productRefNo);
