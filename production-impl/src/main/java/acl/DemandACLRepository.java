@@ -1,10 +1,10 @@
 package acl;
 
-import dao.DemandDao;
-import entities.DemandEntity;
+import demands.DemandForecasting;
+import demands.DemandForecasting.Demand;
 import shortages.DemandRepository;
 import shortages.Demands;
-import tools.Util;
+import shortages.Demands.DailyDemand;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -12,21 +12,19 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class DemandACLRepository implements DemandRepository {
-    private final DemandDao demandDao;
+    private final DemandForecasting demands;
 
-    public DemandACLRepository(DemandDao demandDao) {
-        this.demandDao = demandDao;
+    public DemandACLRepository(DemandForecasting demands) {
+        this.demands = demands;
     }
 
     @Override
     public Demands get(String productRefNo, LocalDate today) {
-        List<DemandEntity> demands = demandDao.findFrom(today.atStartOfDay(), productRefNo);
-        Map<LocalDate, Demands.DailyDemand> mapped = demands.stream()
-                .collect(Collectors.toUnmodifiableMap(DemandEntity::getDay, demand -> new Demands.DailyDemand(
-                                Util.getLevel(demand),
-                                Util.getDeliverySchema(demand)
-                        ), (a, b) -> b)
-                );
+        List<Demand> list = demands.getDemands(productRefNo, today);
+        Map<LocalDate, DailyDemand> mapped = list.stream().collect(Collectors.toUnmodifiableMap(
+                Demand::date,
+                demand -> new DailyDemand(demand.demand(), demand.schema())
+        ));
         return new Demands(mapped);
     }
 }

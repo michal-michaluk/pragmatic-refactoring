@@ -1,6 +1,4 @@
-package entities;
-
-import enums.DeliverySchema;
+package demands;
 
 import java.time.LocalDate;
 
@@ -74,6 +72,6 @@ public class OriginalDemandEntity {
     }
 
     public String toString() {
-        return "entities.OriginalDemandEntity(atDay=" + this.getAtDay() + ", level=" + this.getLevel() + ", deliverySchema=" + this.getDeliverySchema() + ")";
+        return "demands.OriginalDemandEntity(atDay=" + this.getAtDay() + ", level=" + this.getLevel() + ", deliverySchema=" + this.getDeliverySchema() + ")";
     }
 }

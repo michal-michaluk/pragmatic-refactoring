@@ -1,6 +1,4 @@
-package dao;
-
-import entities.ShortageEntity;
+package shortages;
 
 import java.util.List;
 

@@ -1,13 +1,13 @@
 package services.impl;
 
-import dao.DemandDao;
-import entities.DemandEntity;
-import entities.ShortageEntity;
-import enums.DeliverySchema;
+import demands.DeliverySchema;
+import demands.DemandDao;
+import demands.DemandEntity;
+import demands.Util;
 import external.CurrentStock;
 import production.ProductionDao;
 import production.ProductionEntity;
-import tools.Util;
+import shortages.ShortageEntity;
 
 import java.time.LocalDate;
 import java.util.*;

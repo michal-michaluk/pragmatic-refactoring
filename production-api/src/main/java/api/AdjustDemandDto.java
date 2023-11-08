@@ -1,6 +1,6 @@
 package api;
 
-import enums.DeliverySchema;
+import demands.DeliverySchema;
 
 import java.time.LocalDate;
 

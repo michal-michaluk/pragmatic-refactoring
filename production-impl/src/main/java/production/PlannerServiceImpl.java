@@ -2,14 +2,13 @@ package production;
 
 import api.PlanViewDto;
 import api.PlannerService;
-import dao.ShortageDao;
-import entities.ShortageEntity;
 import external.CurrentStock;
 import external.JiraService;
 import external.NotificationsService;
 import external.StockService;
 import services.impl.ShortageFinder;
-import tools.Util;
+import shortages.ShortageDao;
+import shortages.ShortageEntity;
 
 import java.time.Clock;
 import java.time.Duration;

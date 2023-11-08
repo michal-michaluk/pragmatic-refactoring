@@ -1,10 +1,9 @@
 package services.impl;
 
-import dao.DemandDao;
-import entities.DemandEntity;
-import entities.OriginalDemandEntity;
-import entities.ShortageEntity;
-import enums.DeliverySchema;
+import demands.DeliverySchema;
+import demands.DemandDao;
+import demands.DemandEntity;
+import demands.OriginalDemandEntity;
 import external.CurrentStock;
 import org.junit.Assert;
 import org.junit.Test;
@@ -13,6 +12,7 @@ import production.FormEntity;
 import production.LineEntity;
 import production.ProductionDao;
 import production.ProductionEntity;
+import shortages.ShortageEntity;
 
 import java.time.Duration;
 import java.time.LocalDate;

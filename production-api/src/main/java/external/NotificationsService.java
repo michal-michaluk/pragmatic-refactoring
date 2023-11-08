@@ -1,6 +1,6 @@
 package external;
 
-import entities.ShortageEntity;
+import shortages.ShortageEntity;
 
 import java.util.List;
 

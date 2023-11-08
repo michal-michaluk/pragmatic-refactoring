@@ -1,7 +1,5 @@
-package entities;
+package demands;
 
-
-import enums.DeliverySchema;
 
 /**
  * Created by michal on 07.03.2017.
@@ -78,6 +76,6 @@ public class ManualAdjustmentEntity {
     }
 
     public String toString() {
-        return "entities.ManualAdjustmentEntity(level=" + this.getLevel() + ", note=" + this.getNote() + ", deliverySchema=" + this.getDeliverySchema() + ")";
+        return "demands.ManualAdjustmentEntity(level=" + this.getLevel() + ", note=" + this.getNote() + ", deliverySchema=" + this.getDeliverySchema() + ")";
     }
 }

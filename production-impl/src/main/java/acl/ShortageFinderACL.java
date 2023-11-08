@@ -1,6 +1,5 @@
 package acl;
 
-import entities.ShortageEntity;
 import external.CurrentStock;
 import shortages.*;
 

@@ -1,6 +1,6 @@
 package shortages;
 
-import enums.DeliverySchema;
+import demands.DeliverySchema;
 
 import java.time.LocalDate;
 import java.util.Map;

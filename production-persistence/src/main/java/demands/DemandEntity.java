@@ -1,4 +1,4 @@
-package entities;
+package demands;
 
 import java.time.LocalDate;
 import java.util.LinkedList;
@@ -118,7 +118,7 @@ public class DemandEntity {
     }
 
     public String toString() {
-        return "entities.DemandEntity(id=" + this.getId() + ", callofDate=" + this.getCallofDate() + ", productRefNo=" + this.getProductRefNo() + ", atDay=" + this.getDay() + ", original=" + this.getOriginal() + ", adjustment=" + this.getAdjustment() + ")";
+        return "demands.DemandEntity(id=" + this.getId() + ", callofDate=" + this.getCallofDate() + ", productRefNo=" + this.getProductRefNo() + ", atDay=" + this.getDay() + ", original=" + this.getOriginal() + ", adjustment=" + this.getAdjustment() + ")";
     }
 
 }

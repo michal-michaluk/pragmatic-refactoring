@@ -1,17 +1,15 @@
-package services.impl;
+package demands;
 
 import api.AdjustDemandDto;
 import api.LogisticService;
 import api.StockForecastDto;
-import dao.DemandDao;
-import dao.ShortageDao;
-import entities.DemandEntity;
-import entities.ManualAdjustmentEntity;
-import entities.ShortageEntity;
 import external.CurrentStock;
 import external.JiraService;
 import external.NotificationsService;
 import external.StockService;
+import services.impl.ShortageFinder;
+import shortages.ShortageDao;
+import shortages.ShortageEntity;
 
 import java.time.Clock;
 import java.time.LocalDate;

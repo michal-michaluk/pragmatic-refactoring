@@ -1,12 +1,4 @@
-package tools;
-
-import entities.DemandEntity;
-import enums.DeliverySchema;
-import production.FormEntity;
-import production.LineEntity;
-
-import java.time.Duration;
-import java.time.LocalDateTime;
+package demands;
 
 /**
  * Created by michal on 07.03.2017.
@@ -55,14 +47,4 @@ public class Util {
         }
         return DeliverySchema.atDayStart;
     }
-
-    public static boolean isFormAvailableAt(FormEntity form, LocalDateTime start, Duration duration) {
-        // TODO How to store / calculate that ?
-        return false;
-    }
-
-    public static boolean canProduceOn(LineEntity line, FormEntity form) {
-        return line.getMaxWeight() > form.getWeight();
-    }
-
 }

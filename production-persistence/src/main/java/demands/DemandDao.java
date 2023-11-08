@@ -1,6 +1,4 @@
-package dao;
-
-import entities.DemandEntity;
+package demands;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

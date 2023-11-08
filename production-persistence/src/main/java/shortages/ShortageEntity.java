@@ -1,4 +1,4 @@
-package entities;
+package shortages;
 
 import java.time.LocalDate;
 
@@ -84,6 +84,6 @@ public class ShortageEntity {
     }
 
     public String toString() {
-        return "entities.ShortageEntity(refNo=" + this.getRefNo() + ", found=" + this.getFound() + ", missing=" + this.getMissing() + ", atDay=" + this.getAtDay() + ")";
+        return "shortages.ShortageEntity(refNo=" + this.getRefNo() + ", found=" + this.getFound() + ", missing=" + this.getMissing() + ", atDay=" + this.getAtDay() + ")";
     }
 }
