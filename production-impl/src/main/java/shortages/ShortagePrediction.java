@@ -9,9 +9,9 @@ class ShortagePrediction {
     private final DateRange dates;
     private final ProductionOutputs outputs;
     private final Demands demands;
-    private final long warehouseStock;
+    private final WarehouseStock warehouseStock;
 
-    ShortagePrediction(String productRefNo, DateRange dates, ProductionOutputs outputs, Demands demands, long warehouseStock) {
+    ShortagePrediction(String productRefNo, DateRange dates, ProductionOutputs outputs, Demands demands, WarehouseStock warehouseStock) {
         this.productRefNo = productRefNo;
         this.dates = dates;
         this.outputs = outputs;
@@ -20,8 +20,8 @@ class ShortagePrediction {
     }
 
     Shortages predict() {
-        long level = warehouseStock;
-        Shortages.Builder shortages = Shortages.builder(productRefNo);
+        long level = warehouseStock.level();
+        Shortages.Builder shortages = Shortages.builder(productRefNo, warehouseStock);
         for (LocalDate day : dates) {
             DailyDemand demand = demands.get(day);
             long produced = outputs.getProduced(day);

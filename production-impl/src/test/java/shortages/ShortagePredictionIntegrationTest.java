@@ -1,26 +1,28 @@
-package acl;
+package shortages;
 
 import demands.*;
 import external.CurrentStock;
+import external.StockService;
 import mediators.Shortages2DemandIntegration;
 import mediators.Shortages2ProductionIntegration;
+import mediators.Shortages2WarehouseIntegration;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 import production.*;
-import shortages.ShortageEntity;
 
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 
-public class ShortageFinderACLTest {
+public class ShortagePredictionIntegrationTest {
 
     private final String productRefNo = "300900";
     AtomicLong ids = new AtomicLong(0);
@@ -28,9 +30,13 @@ public class ShortageFinderACLTest {
 
     private final DemandDao demands = Mockito.mock(DemandDao.class);
     private final ProductionDao productions = Mockito.mock(ProductionDao.class);
-    private final ShortageFinderACL subject = new ShortageFinderACL(
+    private final StockService warehouse = Mockito.mock(StockService.class);
+
+    private final ShortagePredictionFactory factory = new ShortagePredictionFactory(
             new Shortages2DemandIntegration(new DemandForecastingService(demands)),
-            new Shortages2ProductionIntegration(new ProductionPlanningService(productions))
+            new Shortages2ProductionIntegration(new ProductionPlanningService(productions)),
+            new Shortages2WarehouseIntegration(warehouse),
+            new ConfigurationParameters(7, 0)
     );
 
     @Test
@@ -47,20 +53,29 @@ public class ShortageFinderACLTest {
                         prod(0, 6, 7), prod(0, 6, 14),
                         prod(0, 7, 7), prod(0, 7, 14)
                 ));
+        Mockito.when(warehouse.getCurrentStock(Mockito.eq(productRefNo))).thenReturn(new CurrentStock(1000, 200));
 
-        CurrentStock stock = new CurrentStock(1000, 200);
-        print(stock);
-        List<ShortageEntity> shortages = subject.findShortages(
-                productRefNo,
-                date.plusDays(1), 7,
-                stock
-        );
+        List<ShortageEntity> shortages = findShortages(productRefNo, date.plusDays(1));
         print(shortages);
         Assert.assertEquals(2, shortages.size());
         Assert.assertEquals(date.plusDays(2), shortages.get(0).getAtDay());
         Assert.assertEquals(3400, shortages.get(0).getMissing());
         Assert.assertEquals(date.plusDays(3), shortages.get(1).getAtDay());
         Assert.assertEquals(7800, shortages.get(1).getMissing());
+    }
+
+    public List<ShortageEntity> findShortages(String productRefNo, LocalDate today) {
+        ShortagePrediction prediction = factory.get(productRefNo, today);
+        Shortages shortages = prediction.predict();
+
+        return shortages.map((String productionRefNo, Map.Entry<LocalDate, Long> entry) -> {
+            ShortageEntity entity = new ShortageEntity();
+            entity.setRefNo(productRefNo);
+            entity.setFound(LocalDate.now());
+            entity.setAtDay(entry.getKey());
+            entity.setMissing(entry.getValue());
+            return entity;
+        });
     }
 
     private void print(CurrentStock stock) {
