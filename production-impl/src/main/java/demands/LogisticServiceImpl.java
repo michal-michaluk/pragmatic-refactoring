@@ -1,5 +1,6 @@
 package demands;
 
+import acl.ShortageFinderACL;
 import api.AdjustDemandDto;
 import api.LogisticService;
 import api.StockForecastDto;
@@ -7,7 +8,6 @@ import external.CurrentStock;
 import external.JiraService;
 import external.NotificationsService;
 import external.StockService;
-import services.impl.ShortageFinder;
 import shortages.ShortageDao;
 import shortages.ShortageEntity;
 
@@ -22,7 +22,7 @@ public class LogisticServiceImpl implements LogisticService {
     private DemandDao demandDao;
     private ShortageDao shortageDao;
     private StockService stockService;
-    private ShortageFinder shortageFinder;
+    private ShortageFinderACL shortageFinder;
 
     private NotificationsService notificationService;
     private JiraService jiraService;

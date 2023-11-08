@@ -1,12 +1,12 @@
 package warehouse;
 
+import acl.ShortageFinderACL;
 import api.QualityService;
 import api.StorageUnit;
 import external.CurrentStock;
 import external.JiraService;
 import external.NotificationsService;
 import external.StockService;
-import services.impl.ShortageFinder;
 import shortages.ShortageDao;
 import shortages.ShortageEntity;
 
@@ -19,7 +19,7 @@ public class QualityServiceImpl implements QualityService {
     //Inject all
     private ShortageDao shortageDao;
     private StockService stockService;
-    private ShortageFinder shortageFinder;
+    private ShortageFinderACL shortageFinder;
 
     private NotificationsService notificationService;
     private JiraService jiraService;
@@ -73,8 +73,8 @@ public class QualityServiceImpl implements QualityService {
         if (!shortages.isEmpty() && !shortages.equals(previous)) {
             notificationService.softNotifyPlanner(shortages);
             if (currentStock.getLocked() > 0 &&
-                    shortages.get(0).getAtDay()
-                            .isBefore(today.plusDays(confIncreaseQATaskPriorityInDays))) {
+                shortages.get(0).getAtDay()
+                        .isBefore(today.plusDays(confIncreaseQATaskPriorityInDays))) {
                 jiraService.increasePriorityFor(productRefNo);
             }
         }

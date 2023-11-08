@@ -1,7 +1,7 @@
-package acl;
+package mediators;
 
-import demands.DemandForecasting;
-import demands.DemandForecasting.Demand;
+import demands.DemandForecastingService;
+import demands.DemandForecastingService.Demand;
 import shortages.DemandRepository;
 import shortages.Demands;
 import shortages.Demands.DailyDemand;
@@ -11,10 +11,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class DemandACLRepository implements DemandRepository {
-    private final DemandForecasting demands;
+public class Shortages2DemandIntegration implements DemandRepository {
+    private final DemandForecastingService demands;
 
-    public DemandACLRepository(DemandForecasting demands) {
+    public Shortages2DemandIntegration(DemandForecastingService demands) {
         this.demands = demands;
     }
 

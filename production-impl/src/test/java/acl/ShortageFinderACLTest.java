@@ -1,17 +1,13 @@
 package acl;
 
-import demands.DeliverySchema;
-import demands.DemandDao;
-import demands.DemandEntity;
-import demands.OriginalDemandEntity;
+import demands.*;
 import external.CurrentStock;
+import mediators.Shortages2DemandIntegration;
+import mediators.Shortages2ProductionIntegration;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
-import production.FormEntity;
-import production.LineEntity;
-import production.ProductionDao;
-import production.ProductionEntity;
+import production.*;
 import shortages.ShortageEntity;
 
 import java.time.Duration;
@@ -32,7 +28,10 @@ public class ShortageFinderACLTest {
 
     private final DemandDao demands = Mockito.mock(DemandDao.class);
     private final ProductionDao productions = Mockito.mock(ProductionDao.class);
-    private final ShortageFinderACL subject = new ShortageFinderACL(new DemandACLRepository(demands), new ProductionACLRepository(productions));
+    private final ShortageFinderACL subject = new ShortageFinderACL(
+            new Shortages2DemandIntegration(new DemandForecastingService(demands)),
+            new Shortages2ProductionIntegration(new ProductionPlanningService(productions))
+    );
 
     @Test
     public void findShortages() {

@@ -1,12 +1,12 @@
 package production;
 
+import acl.ShortageFinderACL;
 import api.PlanViewDto;
 import api.PlannerService;
 import external.CurrentStock;
 import external.JiraService;
 import external.NotificationsService;
 import external.StockService;
-import services.impl.ShortageFinder;
 import shortages.ShortageDao;
 import shortages.ShortageEntity;
 
@@ -25,7 +25,7 @@ public class PlannerServiceImpl implements PlannerService {
     private FormDao formDao;
     private ShortageDao shortageDao;
     private StockService stockService;
-    private ShortageFinder shortageFinder;
+    private ShortageFinderACL shortageFinder;
 
 
     private NotificationsService notificationService;

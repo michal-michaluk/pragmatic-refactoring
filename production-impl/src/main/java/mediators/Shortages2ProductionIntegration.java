@@ -1,4 +1,4 @@
-package acl;
+package mediators;
 
 import production.ProductionPlanningService;
 import production.ProductionPlanningService.OutputSummary;
@@ -9,10 +9,10 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ProductionACLRepository implements ProductionRepository {
+public class Shortages2ProductionIntegration implements ProductionRepository {
     private final ProductionPlanningService production;
 
-    public ProductionACLRepository(ProductionPlanningService production) {
+    public Shortages2ProductionIntegration(ProductionPlanningService production) {
         this.production = production;
     }
 

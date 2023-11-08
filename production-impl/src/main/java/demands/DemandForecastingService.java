@@ -4,10 +4,10 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class DemandForecasting {
+public class DemandForecastingService {
     private final DemandDao demandDao;
 
-    public DemandForecasting(DemandDao demandDao) {
+    public DemandForecastingService(DemandDao demandDao) {
         this.demandDao = demandDao;
     }
 
