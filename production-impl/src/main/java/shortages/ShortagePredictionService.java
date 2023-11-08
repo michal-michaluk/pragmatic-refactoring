@@ -1,7 +1,5 @@
 package shortages;
 
-import api.AdjustDemandDto;
-import production.ProductionEntity;
 import shortages.NotificationService.NotificationTrigger;
 
 import java.time.Clock;
@@ -23,8 +21,8 @@ public class ShortagePredictionService {
         this.clock = clock;
     }
 
-    public void processShortagesLogistic(AdjustDemandDto adjustment) {
-        processForProduct(adjustment.getProductRefNo(), LocalDate.now(clock), NotificationTrigger.DemandsChanged);
+    public void processShortagesLogistic(String productRefNo) {
+        processForProduct(productRefNo, LocalDate.now(clock), NotificationTrigger.DemandsChanged);
     }
 
     public void processShortagesQuality(String productRefNo) {
@@ -35,11 +33,10 @@ public class ShortagePredictionService {
         processForProduct(productRefNo, LocalDate.now(clock), NotificationTrigger.WarehouseStockChanged);
     }
 
-    public void processShortagesProduction(List<ProductionEntity> products) {
+    public void processShortagesProduction(List<String> productsRefNo) {
         LocalDate today = LocalDate.now(clock);
-
-        for (ProductionEntity production : products) {
-            processForProduct(production.getForm().getRefNo(), today, NotificationTrigger.ProductionPlanChanged);
+        for (String productRefNo : productsRefNo) {
+            processForProduct(productRefNo, today, NotificationTrigger.ProductionPlanChanged);
         }
     }
 

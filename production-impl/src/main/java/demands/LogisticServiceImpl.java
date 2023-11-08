@@ -53,7 +53,7 @@ public class LogisticServiceImpl implements LogisticService {
         demand.getAdjustment().add(manualAdjustment);
         // TODO REFACTOR: introduce domain event DemandManuallyAdjusted
 
-        shortages.processShortagesLogistic(adjustment);
+        shortages.processShortagesLogistic(adjustment.getProductRefNo());
     }
 
 
