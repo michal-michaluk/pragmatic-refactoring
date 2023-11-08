@@ -1,4 +1,4 @@
-package entities;
+package production;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -194,6 +194,6 @@ public class ProductionEntity {
     }
 
     public String toString() {
-        return "entities.ProductionEntity(productionId=" + this.getProductionId() + ", line=" + this.getLine() + ", form=" + this.getForm() + ", start=" + this.getStart() + ", duration=" + this.getDuration() + ", startAndWormUp=" + this.getStartAndWormUp() + ", endAndCleaning=" + this.getEndAndCleaning() + ", speed=" + this.getSpeed() + ", output=" + this.getOutput() + ", utilization=" + this.getUtilization() + ", color=" + this.getColor() + ", note=" + this.getNote() + ")";
+        return "production.ProductionEntity(productionId=" + this.getProductionId() + ", line=" + this.getLine() + ", form=" + this.getForm() + ", start=" + this.getStart() + ", duration=" + this.getDuration() + ", startAndWormUp=" + this.getStartAndWormUp() + ", endAndCleaning=" + this.getEndAndCleaning() + ", speed=" + this.getSpeed() + ", output=" + this.getOutput() + ", utilization=" + this.getUtilization() + ", color=" + this.getColor() + ", note=" + this.getNote() + ")";
     }
 }

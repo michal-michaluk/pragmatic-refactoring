@@ -1,4 +1,4 @@
-package entities;
+package production;
 
 import java.time.Duration;
 
@@ -111,6 +111,6 @@ public class FormEntity {
     }
 
     public String toString() {
-        return "entities.FormEntity(refNo=" + this.getRefNo() + ", outputPerMinute=" + this.getOutputPerMinute() + ", utilization=" + this.getUtilization() + ", weight=" + this.getWeight() + ", startAndWormUp=" + this.getStartAndWormUp() + ", endAndCleaning=" + this.getEndAndCleaning() + ")";
+        return "production.FormEntity(refNo=" + this.getRefNo() + ", outputPerMinute=" + this.getOutputPerMinute() + ", utilization=" + this.getUtilization() + ", weight=" + this.getWeight() + ", startAndWormUp=" + this.getStartAndWormUp() + ", endAndCleaning=" + this.getEndAndCleaning() + ")";
     }
 }

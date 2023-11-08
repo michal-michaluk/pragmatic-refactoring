@@ -1,13 +1,18 @@
 package acl;
 
 import dao.DemandDao;
-import dao.ProductionDao;
-import entities.*;
+import entities.DemandEntity;
+import entities.OriginalDemandEntity;
+import entities.ShortageEntity;
 import enums.DeliverySchema;
 import external.CurrentStock;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
+import production.FormEntity;
+import production.LineEntity;
+import production.ProductionDao;
+import production.ProductionEntity;
 
 import java.time.Duration;
 import java.time.LocalDate;

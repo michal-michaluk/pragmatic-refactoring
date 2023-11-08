@@ -1,6 +1,4 @@
-package dao;
-
-import entities.ProductionEntity;
+package production;
 
 import java.time.LocalDateTime;
 import java.util.List;

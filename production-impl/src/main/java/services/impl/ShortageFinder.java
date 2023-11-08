@@ -1,12 +1,12 @@
 package services.impl;
 
 import dao.DemandDao;
-import dao.ProductionDao;
 import entities.DemandEntity;
-import entities.ProductionEntity;
 import entities.ShortageEntity;
 import enums.DeliverySchema;
 import external.CurrentStock;
+import production.ProductionDao;
+import production.ProductionEntity;
 import tools.Util;
 
 import java.time.LocalDate;

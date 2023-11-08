@@ -1,4 +1,4 @@
-package entities;
+package production;
 
 /**
  * Created by michal on 31.12.2016.
@@ -53,6 +53,6 @@ public class LineEntity {
     }
 
     public String toString() {
-        return "entities.LineEntity(id=" + this.getId() + ", maxWeight=" + this.getMaxWeight() + ")";
+        return "production.LineEntity(id=" + this.getId() + ", maxWeight=" + this.getMaxWeight() + ")";
     }
 }

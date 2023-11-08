@@ -1,9 +1,9 @@
 package tools;
 
 import entities.DemandEntity;
-import entities.FormEntity;
-import entities.LineEntity;
 import enums.DeliverySchema;
+import production.FormEntity;
+import production.LineEntity;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
