@@ -1,5 +1,7 @@
 package shortages;
 
+import shortages.Demands.DailyDemand;
+
 import java.time.LocalDate;
 
 class ShortagePrediction {
@@ -18,21 +20,18 @@ class ShortagePrediction {
     }
 
     Shortages predict() {
-        long level = this.warehouseStock;
-        Shortages.Builder gap = Shortages.builder(productRefNo);
+        long level = warehouseStock;
+        Shortages.Builder shortages = Shortages.builder(productRefNo);
         for (LocalDate day : dates) {
-            Demands.DailyDemand demand = demands.get(day);
+            DailyDemand demand = demands.get(day);
             long produced = outputs.getProduced(day);
-
             long levelOnDelivery = demand.calculateLevelOnDelivery(level, produced);
-
             if (levelOnDelivery < 0) {
-                gap.add(day, levelOnDelivery);
+                shortages.add(day, levelOnDelivery);
             }
             long endOfDayLevel = demand.calculateEndOfDayLevel(level, produced);
-            level = endOfDayLevel >= 0 ? endOfDayLevel : 0;
+            level = Math.max(0, endOfDayLevel);
         }
-        return gap.build();
+        return shortages.build();
     }
-
 }

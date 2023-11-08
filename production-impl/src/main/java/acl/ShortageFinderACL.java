@@ -6,6 +6,7 @@ import shortages.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 public class ShortageFinderACL {
 
@@ -25,6 +26,13 @@ public class ShortageFinderACL {
         );
         Shortages shortages = service.predict(productRefNo, DateRange.of(today, daysAhead));
 
-        return shortages.getEntities();
+        return shortages.map((String productionRefNo, Map.Entry<LocalDate, Long> entry) -> {
+            ShortageEntity entity = new ShortageEntity();
+            entity.setRefNo(productRefNo);
+            entity.setFound(LocalDate.now());
+            entity.setAtDay(entry.getKey());
+            entity.setMissing(entry.getValue());
+            return entity;
+        });
     }
 }
