@@ -1,32 +1,13 @@
 package warehouse;
 
-import acl.ShortageFinderACL;
 import api.QualityService;
 import api.StorageUnit;
-import external.CurrentStock;
-import external.JiraService;
-import external.NotificationsService;
-import external.StockService;
-import shortages.ShortageDao;
-import shortages.ShortageEntity;
-
-import java.time.Clock;
-import java.time.LocalDate;
-import java.util.List;
+import shortages.ShortagePredictionService;
 
 public class QualityServiceImpl implements QualityService {
 
     //Inject all
-    private ShortageDao shortageDao;
-    private StockService stockService;
-    private ShortageFinderACL shortageFinder;
-
-    private NotificationsService notificationService;
-    private JiraService jiraService;
-    private Clock clock;
-
-    private int confShortagePredictionDaysAhead;
-    private long confIncreaseQATaskPriorityInDays;
+    private ShortagePredictionService shortages;
 
     /**
      * <pre>
@@ -41,7 +22,7 @@ public class QualityServiceImpl implements QualityService {
     //Transactional
     @Override
     public void lock(StorageUnit unit) {
-        processShortages(unit.getProductRefNo());
+        shortages.processShortagesQuality(unit.getProductRefNo());
     }
 
     /**
@@ -57,29 +38,7 @@ public class QualityServiceImpl implements QualityService {
     //Transactional
     @Override
     public void unlock(StorageUnit unit, long recovered, long scrapped) {
-        processShortages(unit.getProductRefNo());
+        shortages.processShortagesQuality(unit.getProductRefNo());
     }
 
-    public void processShortages(String productRefNo) {
-        LocalDate today = LocalDate.now(clock);
-        CurrentStock currentStock = stockService.getCurrentStock(productRefNo);
-        List<ShortageEntity> shortages = shortageFinder.findShortages(
-                productRefNo,
-                today, confShortagePredictionDaysAhead,
-                currentStock
-        );
-
-        List<ShortageEntity> previous = shortageDao.getForProduct(productRefNo);
-        if (!shortages.isEmpty() && !shortages.equals(previous)) {
-            notificationService.softNotifyPlanner(shortages);
-            if (currentStock.getLocked() > 0 &&
-                shortages.get(0).getAtDay()
-                        .isBefore(today.plusDays(confIncreaseQATaskPriorityInDays))) {
-                jiraService.increasePriorityFor(productRefNo);
-            }
-        }
-        if (shortages.isEmpty() && !previous.isEmpty()) {
-            shortageDao.delete(productRefNo);
-        }
-    }
 }
