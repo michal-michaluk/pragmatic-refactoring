@@ -1,26 +1,21 @@
 package services.impl;
 
-import dao.DemandDao;
-import entities.DemandEntity;
 import entities.ShortageEntity;
 import external.CurrentStock;
-import shortages.Demands;
-import shortages.ProductionOutputs;
-import shortages.ProductionOutputsRepository;
+import shortages.*;
 
 import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Stream;
 
 public class ShortageFinder {
 
-    private final DemandDao demandDao;
+    private final DemandsRepository demandsRepository;
     private final ProductionOutputsRepository productionRepository;
 
-    public ShortageFinder(DemandDao demandDao, ProductionOutputsRepository productionDao) {
-        this.demandDao = demandDao;
-        this.productionRepository = productionDao;
+    public ShortageFinder(DemandsRepository demandsRepository, ProductionOutputsRepository productionRepository) {
+        this.demandsRepository = demandsRepository;
+        this.productionRepository = productionRepository;
     }
 
     /**
@@ -42,14 +37,9 @@ public class ShortageFinder {
      * (increase amount in scheduled transport or organize extra transport at given time)
      */
     public List<ShortageEntity> findShortages(String productRefNo, LocalDate today, int daysAhead, CurrentStock stock) {
-        List<DemandEntity> demands = demandDao.findFrom(today.atStartOfDay(), productRefNo);
-
-        List<LocalDate> dates = Stream.iterate(today, date -> date.plusDays(1))
-                .limit(daysAhead)
-                .toList();
-
+        DataRange dates = DataRange.of(today, daysAhead);
         ProductionOutputs outputs = productionRepository.getOutputs(productRefNo, today);
-        Demands demandsPerDay = new Demands(demands);
+        Demands demandsPerDay = demandsRepository.get(productRefNo, today);
 
         long level = stock.getLevel();
 
@@ -77,5 +67,4 @@ public class ShortageFinder {
         }
         return gap;
     }
-
 }
