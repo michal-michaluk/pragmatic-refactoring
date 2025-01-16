@@ -5,7 +5,6 @@ import external.CurrentStock;
 import shortages.*;
 
 import java.time.LocalDate;
-import java.util.LinkedList;
 import java.util.List;
 
 public class ShortageFinder {
@@ -43,7 +42,7 @@ public class ShortageFinder {
 
         long level = stock.getLevel();
 
-        List<ShortageEntity> gap = new LinkedList<>();
+        ShortagesBuilder shortages = new ShortagesBuilder(productRefNo);
         for (LocalDate day : dates) {
             Demands.DailyDemand demand = demandsPerDay.get(day);
             if (demand == null) {
@@ -55,16 +54,11 @@ public class ShortageFinder {
             long levelOnDelivery = demand.calculateLevelOnDelivery(level, produced);
 
             if (levelOnDelivery < 0) {
-                ShortageEntity entity = new ShortageEntity();
-                entity.setRefNo(productRefNo);
-                entity.setFound(LocalDate.now());
-                entity.setAtDay(day);
-                entity.setMissing(-levelOnDelivery);
-                gap.add(entity);
+                shortages.add(day, levelOnDelivery);
             }
             long endOfDayLevel = demand.calculateEndOfDayLevel(level, produced);
             level = endOfDayLevel >= 0 ? endOfDayLevel : 0;
         }
-        return gap;
+        return shortages.build();
     }
 }
