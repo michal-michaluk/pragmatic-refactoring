@@ -1,5 +1,6 @@
 package services.impl;
 
+import acl.ShortageFinder;
 import api.QualityService;
 import api.StorageUnit;
 import dao.ShortageDao;

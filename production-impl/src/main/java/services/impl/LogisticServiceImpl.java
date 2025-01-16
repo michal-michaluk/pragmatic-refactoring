@@ -1,5 +1,6 @@
 package services.impl;
 
+import acl.ShortageFinder;
 import api.AdjustDemandDto;
 import api.LogisticService;
 import api.StockForecastDto;
