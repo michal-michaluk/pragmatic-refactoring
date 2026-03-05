@@ -2,7 +2,7 @@ package services.impl;
 
 import acl.DemandsRepositoryACL;
 import acl.ProductionOutputsRepositoryACL;
-import acl.ShortagePredictionACL;
+import acl.WarehouseStockRepositoryInMemory;
 import dao.DemandDao;
 import dao.ProductionDao;
 import entities.*;
@@ -11,8 +11,7 @@ import external.CurrentStock;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
-import shortages.DemandsRepository;
-import shortages.ProductionOutputsRepository;
+import shortages.*;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -146,5 +145,29 @@ public class ShortageFinderTest {
         form.setStartAndWormUp(Duration.ofMinutes(20));
         form.setEndAndCleaning(Duration.ofMinutes(10));
         return form;
+    }
+
+    static class ShortagePredictionACL {
+
+        private final DemandsRepository demandsRepository;
+        private final ProductionOutputsRepository productionRepository;
+
+        public ShortagePredictionACL(DemandsRepository demandsRepository, ProductionOutputsRepository productionRepository) {
+            this.demandsRepository = demandsRepository;
+            this.productionRepository = productionRepository;
+        }
+
+        public List<ShortageEntity> findShortages(String productRefNo, LocalDate today, int daysAhead, CurrentStock stock) {
+            DataRange dates = DataRange.of(today, daysAhead);
+            ShortagePredictionService service = new ShortagePredictionService(
+                    demandsRepository,
+                    productionRepository,
+                    new WarehouseStockRepositoryInMemory(stock)
+            );
+
+            ShortagesBuilder shortages = service.predict(productRefNo, dates);
+            return shortages.build();
+        }
+
     }
 }
