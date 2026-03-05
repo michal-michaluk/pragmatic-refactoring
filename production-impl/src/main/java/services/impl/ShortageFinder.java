@@ -1,20 +1,26 @@
 package services.impl;
 
+import dao.DemandDao;
+import dao.ProductionDao;
+import entities.DemandEntity;
+import entities.ProductionEntity;
 import entities.ShortageEntity;
+import enums.DeliverySchema;
 import external.CurrentStock;
-import shortages.*;
+import tools.Util;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Stream;
 
 public class ShortageFinder {
 
-    private final DemandsRepository demandsRepository;
-    private final ProductionOutputsRepository productionRepository;
+    private final DemandDao demandDao;
+    private final ProductionDao productionDao;
 
-    public ShortageFinder(DemandsRepository demandsRepository, ProductionOutputsRepository productionRepository) {
-        this.demandsRepository = demandsRepository;
-        this.productionRepository = productionRepository;
+    public ShortageFinder(DemandDao demandDao, ProductionDao productionDao) {
+        this.demandDao = demandDao;
+        this.productionDao = productionDao;
     }
 
     /**
@@ -36,29 +42,65 @@ public class ShortageFinder {
      * (increase amount in scheduled transport or organize extra transport at given time)
      */
     public List<ShortageEntity> findShortages(String productRefNo, LocalDate today, int daysAhead, CurrentStock stock) {
-        DataRange dates = DataRange.of(today, daysAhead);
-        ProductionOutputs outputs = productionRepository.getOutputs(productRefNo, today);
-        Demands demandsPerDay = demandsRepository.get(productRefNo, today);
+        List<ProductionEntity> productions = productionDao.findFromTime(productRefNo, today.atStartOfDay());
+        List<DemandEntity> demands = demandDao.findFrom(today.atStartOfDay(), productRefNo);
+
+        List<LocalDate> dates = Stream.iterate(today, date -> date.plusDays(1))
+                .limit(daysAhead)
+                .toList();
+
+        Map<LocalDate, List<ProductionEntity>> outputs = new HashMap<>();
+        for (ProductionEntity production : productions) {
+            if (!outputs.containsKey(production.getStart().toLocalDate())) {
+                outputs.put(production.getStart().toLocalDate(), new ArrayList<>());
+            }
+            outputs.get(production.getStart().toLocalDate()).add(production);
+        }
+        Map<LocalDate, DemandEntity> demandsPerDay = new HashMap<>();
+        for (DemandEntity demand : demands) {
+            demandsPerDay.put(demand.getDay(), demand);
+        }
 
         long level = stock.getLevel();
 
-        ShortagesBuilder shortages = new ShortagesBuilder(productRefNo);
+        List<ShortageEntity> gap = new LinkedList<>();
         for (LocalDate day : dates) {
-            Demands.DailyDemand demand = demandsPerDay.get(day);
+            DemandEntity demand = demandsPerDay.get(day);
             if (demand == null) {
-                level += outputs.getProduced(day);
+                for (ProductionEntity production : outputs.get(day)) {
+                    level += production.getOutput();
+                }
                 continue;
             }
-            long produced = outputs.getProduced(day);
+            long produced = 0;
+            for (ProductionEntity production : outputs.get(day)) {
+                produced += production.getOutput();
+            }
 
-            long levelOnDelivery = demand.calculateLevelOnDelivery(level, produced);
+            long levelOnDelivery;
+            if (Util.getDeliverySchema(demand) == DeliverySchema.atDayStart) {
+                levelOnDelivery = level - Util.getLevel(demand);
+            } else if (Util.getDeliverySchema(demand) == DeliverySchema.tillEndOfDay) {
+                levelOnDelivery = level - Util.getLevel(demand) + produced;
+            } else if (Util.getDeliverySchema(demand) == DeliverySchema.every3hours) {
+                // TODO WTF ?? we need to rewrite that app :/
+                throw new UnsupportedOperationException();
+            } else {
+                // TODO implement other variants
+                throw new UnsupportedOperationException();
+            }
 
             if (levelOnDelivery < 0) {
-                shortages.add(day, levelOnDelivery);
+                ShortageEntity entity = new ShortageEntity();
+                entity.setRefNo(productRefNo);
+                entity.setFound(LocalDate.now());
+                entity.setAtDay(day);
+                entity.setMissing(-levelOnDelivery);
+                gap.add(entity);
             }
-            long endOfDayLevel = demand.calculateEndOfDayLevel(level, produced);
+            long endOfDayLevel = level + produced - Util.getLevel(demand);
             level = endOfDayLevel >= 0 ? endOfDayLevel : 0;
         }
-        return shortages.build();
+        return gap;
     }
 }

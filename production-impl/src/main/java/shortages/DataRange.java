@@ -9,6 +9,7 @@ public class DataRange implements Iterable<LocalDate> {
     private final List<LocalDate> dates;
 
     private DataRange(List<LocalDate> dates) {
+        assert !dates.isEmpty();
         this.dates = dates;
     }
 
@@ -22,5 +23,9 @@ public class DataRange implements Iterable<LocalDate> {
     @Override
     public Iterator<LocalDate> iterator() {
         return dates.iterator();
+    }
+
+    public LocalDate start() {
+        return dates.getFirst();
     }
 }
