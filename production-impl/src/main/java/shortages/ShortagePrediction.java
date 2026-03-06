@@ -17,8 +17,8 @@ class ShortagePrediction {
         this.warehouseStock = warehouseStock;
     }
 
-    ShortagesBuilder predict() {
-        ShortagesBuilder shortages = new ShortagesBuilder(productRefNo);
+    Shortages predict() {
+        Shortages shortages = new Shortages(productRefNo, warehouseStock);
         long level = warehouseStock.level();
         for (LocalDate day : dates) {
             Demands.DailyDemand demand = demandsPerDay.get(day);
@@ -37,5 +37,9 @@ class ShortagePrediction {
             level = endOfDayLevel >= 0 ? endOfDayLevel : 0;
         }
         return shortages;
+    }
+
+    public long lockedPartsOnStock() {
+        return warehouseStock.locked();
     }
 }

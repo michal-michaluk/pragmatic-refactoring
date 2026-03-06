@@ -3,12 +3,7 @@ package services.impl;
 import api.QualityService;
 import api.StorageUnit;
 import dao.ShortageDao;
-import external.JiraService;
-import external.NotificationsService;
-import external.StockService;
 import shortages.ShortagePredictionService;
-
-import java.time.Clock;
 
 public class QualityServiceImpl implements QualityService {
 
@@ -29,7 +24,7 @@ public class QualityServiceImpl implements QualityService {
     //Transactional
     @Override
     public void lock(StorageUnit unit) {
-        shortages.processShortagesQuality(unit.getProductRefNo());
+        shortages.handleQualityLocks(unit.getProductRefNo());
     }
 
     /**
@@ -45,6 +40,6 @@ public class QualityServiceImpl implements QualityService {
     //Transactional
     @Override
     public void unlock(StorageUnit unit, long recovered, long scrapped) {
-        shortages.processShortagesQuality(unit.getProductRefNo());
+        shortages.handleQualityLocks(unit.getProductRefNo());
     }
 }

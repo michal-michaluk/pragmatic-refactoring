@@ -165,8 +165,8 @@ public class ShortageFinderTest {
                     new WarehouseStockRepositoryInMemory(stock)
             );
 
-            ShortagesBuilder shortages = service.predict(productRefNo, dates);
-            return shortages.build();
+            Shortages shortages = service.createShortagePrediction(productRefNo, dates);
+            return shortages.toEntities();
         }
 
     }

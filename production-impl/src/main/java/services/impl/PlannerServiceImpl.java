@@ -5,21 +5,17 @@ import api.PlannerService;
 import dao.FormDao;
 import dao.LineDao;
 import dao.ProductionDao;
-import dao.ShortageDao;
 import entities.FormEntity;
 import entities.LineEntity;
 import entities.ProductionEntity;
-import external.JiraService;
-import external.NotificationsService;
-import external.StockService;
 import shortages.ShortagePredictionService;
 import tools.Util;
 
-import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PlannerServiceImpl implements PlannerService {
 
@@ -102,7 +98,11 @@ public class PlannerServiceImpl implements PlannerService {
         productionDao.save(newScheduled);
 
         // Shortages may arise if insufficient production was planned.
-        shortages.processShortagesProduction(changed);
+        shortages.handlePlanChanged(
+                changed.stream()
+                        .map(production -> production.getForm().getRefNo())
+                        .collect(Collectors.toSet()
+                        ));
     }
 
     /**
@@ -137,7 +137,7 @@ public class PlannerServiceImpl implements PlannerService {
         production.setDuration(duration);
 
         // Shortages may arise if insufficient production was planned.
-        shortages.processShortagesProduction(changed);
+        shortages.handlePlanChanged(changed.stream().map(production -> production.getForm().getRefNo()).collect(Collectors.toSet()));
     }
 
     //Transactional
@@ -221,7 +221,7 @@ public class PlannerServiceImpl implements PlannerService {
         }
 
         return firstStart.isAfter(secondStart) && firstStart.isBefore(secondStart.plus(secondDuration)) ||
-                secondStart.isAfter(firstStart) && secondStart.isBefore(firstStart.plus(firstDuration))
+               secondStart.isAfter(firstStart) && secondStart.isBefore(firstStart.plus(firstDuration))
                 ;
     }
 }

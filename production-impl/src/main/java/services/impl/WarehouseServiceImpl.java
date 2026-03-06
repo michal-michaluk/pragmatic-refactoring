@@ -4,16 +4,7 @@ import api.DeliveryNote;
 import api.StorageUnit;
 import api.WarehouseService;
 import dao.ShortageDao;
-import entities.ShortageEntity;
-import external.CurrentStock;
-import external.JiraService;
-import external.NotificationsService;
-import external.StockService;
 import shortages.ShortagePredictionService;
-
-import java.time.Clock;
-import java.time.LocalDate;
-import java.util.List;
 
 public class WarehouseServiceImpl implements WarehouseService {
 
@@ -32,7 +23,7 @@ public class WarehouseServiceImpl implements WarehouseService {
     //Transactional
     @Override
     public void registerNew(StorageUnit unit) {
-        shortages.processShortagesWarehouse(unit.getProductRefNo());
+        shortages.handleWarehouseStockChanged(unit.getProductRefNo());
     }
 
     /**
@@ -48,7 +39,7 @@ public class WarehouseServiceImpl implements WarehouseService {
     @Override
     public void deliver(DeliveryNote note) {
         for (String productRefNo : note.getProducts()) {
-            shortages.processShortagesWarehouse(productRefNo);
+            shortages.handleWarehouseStockChanged(productRefNo);
         }
     }
 }

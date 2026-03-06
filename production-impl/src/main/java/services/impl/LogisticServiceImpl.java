@@ -4,20 +4,13 @@ import api.AdjustDemandDto;
 import api.LogisticService;
 import api.StockForecastDto;
 import dao.DemandDao;
-import dao.ShortageDao;
 import entities.DemandEntity;
 import entities.ManualAdjustmentEntity;
-import entities.ShortageEntity;
-import external.CurrentStock;
-import external.JiraService;
-import external.NotificationsService;
-import external.StockService;
 import shortages.ShortagePredictionService;
 
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.LinkedList;
-import java.util.List;
 
 public class LogisticServiceImpl implements LogisticService {
 
@@ -63,7 +56,7 @@ public class LogisticServiceImpl implements LogisticService {
         demand.getAdjustment().add(manualAdjustment);
         // TODO REFACTOR: introduce domain event DemandManuallyAdjusted
 
-        shortages.processShortagesLogistic(adjustment);
+        shortages.handleDemandChanged(adjustment.getProductRefNo());
     }
 
     /**
